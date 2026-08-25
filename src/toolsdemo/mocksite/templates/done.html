@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}예약 완료 (결제 대기){% endblock %}
+{% block content %}
+<div class="card">
+{% if error %}
+  <p class="banner err" id="confirm-error">{{ error }}</p>
+  <p><a href="/">처음으로</a></p>
+{% else %}
+  <p class="ok" id="confirm-ok">예약이 완료되었습니다. (결제 대기)</p>
+  <p class="banner warn" id="payment-notice">좌석만 확보된 상태입니다. <strong id="payment-deadline">10분 이내</strong>에 직접 결제해야 예약이 유지됩니다. 결제는 자동화하지 않습니다.</p>
+  <dl>
+    <dt>예약번호</dt><dd id="reservation-no">{{ reservation.reservation_no }}</dd>
+    <dt>열차</dt><dd id="r-train">{{ reservation.train.train_type }} {{ reservation.train.train_no }}</dd>
+    <dt>구간</dt><dd id="r-route">{{ reservation.train.departure }} → {{ reservation.train.arrival }}</dd>
+    <dt>일시</dt><dd id="r-when">{{ reservation.date }} {{ reservation.train.depart_time }}</dd>
+    <dt>예약자</dt><dd id="r-name">{{ reservation.name }}</dd>
+    <dt>인원</dt><dd id="r-passengers">{{ reservation.passengers }}명</dd>
+    <dt>결제예정금액</dt><dd id="r-total">{{ "{:,}".format(reservation.total_price) }}원</dd>
+  </dl>
+  <p><a href="/">처음으로</a></p>
+{% endif %}
+</div>
+{% endblock %}

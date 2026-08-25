@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Mock 기차 예약{% endblock %}</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: "Malgun Gothic", system-ui, sans-serif; margin: 0; background: #f4f6f8; color: #1a2027; }
+    header { background: #0b4da2; color: #fff; padding: 16px 24px; }
+    header a { color: #fff; text-decoration: none; font-weight: 700; font-size: 20px; }
+    main { max-width: 960px; margin: 24px auto; padding: 0 16px; }
+    .card { background: #fff; border: 1px solid #dde3ea; border-radius: 8px; padding: 20px; margin-bottom: 16px; }
+    label { display: block; font-weight: 600; margin: 12px 0 4px; font-size: 14px; }
+    input, select { width: 100%; max-width: 320px; padding: 8px 10px; border: 1px solid #c3ccd6; border-radius: 4px; font-size: 15px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 9px 18px; background: #0b4da2; color: #fff; border: 0; border-radius: 4px; font-size: 15px; cursor: pointer; }
+    button.row-btn { margin: 0; padding: 5px 12px; font-size: 13px; }
+    button:disabled { background: #9aa7b4; cursor: not-allowed; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; }
+    th, td { border-bottom: 1px solid #e5eaf0; padding: 9px 8px; text-align: left; }
+    th { background: #eef2f7; }
+    tr.sold-out td { color: #98a2ad; }
+    .banner { padding: 10px 14px; border-radius: 4px; margin-bottom: 12px; font-size: 14px; }
+    .banner.warn { background: #fff4e5; border: 1px solid #ffd8a8; }
+    .banner.err { background: #ffeaea; border: 1px solid #ffb8b8; }
+    .ok { font-size: 22px; font-weight: 700; color: #0b7a3b; }
+    dl { display: grid; grid-template-columns: 130px 1fr; gap: 6px 12px; font-size: 15px; }
+    dt { font-weight: 600; color: #5a6672; }
+    dd { margin: 0; }
+  </style>
+</head>
+<body>
+  <header><a href="/">Mock 기차 예약</a></header>
+  <main>
+    <div class="banner warn">
+      데모용 가상 예약 사이트입니다. 실제 코레일과 무관하며 어떤 결제도 발생하지 않습니다.
+    </div>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

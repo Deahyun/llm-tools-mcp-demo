@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}승차권 조회{% endblock %}
+{% block content %}
+<div class="card">
+  <h2>승차권 조회</h2>
+  <form action="/search" method="get" id="search-form">
+    <label for="departure">출발역</label>
+    <input id="departure" name="departure" list="station-list" placeholder="서울" autocomplete="off">
+
+    <label for="arrival">도착역</label>
+    <input id="arrival" name="arrival" list="station-list" placeholder="부산" autocomplete="off">
+
+    <label for="date">출발일</label>
+    <input id="date" name="date" type="date" value="{{ today }}">
+
+    <label for="depart_after">출발시각 이후</label>
+    <input id="depart_after" name="depart_after" type="time" value="">
+
+    <datalist id="station-list">
+      {% for s in stations %}<option value="{{ s }}"></option>{% endfor %}
+    </datalist>
+
+    <button type="submit">조회하기</button>
+  </form>
+</div>
+{% endblock %}

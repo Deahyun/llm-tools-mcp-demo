@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}예약 정보 입력{% endblock %}
+{% block content %}
+{% if not train %}
+  <div class="card"><p class="banner err" id="reserve-error">열차번호 {{ train_no }} 를 찾을 수 없습니다.</p></div>
+{% else %}
+<div class="card">
+  <h2>예약 정보 입력</h2>
+  <dl id="train-summary">
+    <dt>열차</dt><dd id="s-train">{{ train.train_type }} {{ train.train_no }}</dd>
+    <dt>구간</dt><dd id="s-route">{{ train.departure }} → {{ train.arrival }}</dd>
+    <dt>일시</dt><dd id="s-when">{{ date }} {{ train.depart_time }} → {{ train.arrive_time }}</dd>
+    <dt>운임</dt><dd id="s-price">{{ "{:,}".format(train.price) }}원</dd>
+    <dt>잔여석</dt><dd id="s-seats">{{ train.seats_left }}석</dd>
+  </dl>
+
+  <form action="/confirm" method="post" id="reserve-form">
+    <input type="hidden" name="train_no" value="{{ train.train_no }}">
+    <input type="hidden" name="date" value="{{ date }}">
+    <input type="hidden" name="departure" value="{{ train.departure }}">
+    <input type="hidden" name="arrival" value="{{ train.arrival }}">
+
+    <label for="name">예매자 이름</label>
+    <input id="name" name="name" required autocomplete="off">
+
+    <label for="phone">연락처</label>
+    <input id="phone" name="phone" placeholder="010-0000-0000" autocomplete="off">
+
+    <label for="passengers">인원</label>
+    <input id="passengers" name="passengers" type="number" min="1" max="9" value="1">
+
+    <button type="submit">예약하기</button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}

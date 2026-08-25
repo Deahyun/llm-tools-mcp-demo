@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "toolsdemo"
+version = "0.1.0"
+description = "로컬 LLM(Ollama qwen3.6) + Playwright 기반 tools / MCP 에이전트 데모"
+requires-python = ">=3.10"
+dependencies = [
+    "ollama>=0.4.7",
+    "playwright>=1.47.0",
+    "pydantic>=2.8.0",
+    "python-dotenv>=1.0.1",
+    "mcp>=2.1.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "jinja2>=3.1.4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3.0", "pytest-asyncio>=0.24.0", "ruff>=0.6.0", "httpx>=0.27.0"]
+
+[project.scripts]
+toolsdemo-phase1 = "toolsdemo.agent_tools:main"
+toolsdemo-phase2 = "toolsdemo.mcp_.client_agent:main"
+toolsdemo-mocksite = "toolsdemo.mocksite.server:main"
+toolsdemo-mcp-server = "toolsdemo.mcp_.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"toolsdemo.mocksite" = ["templates/*.html"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "llm: Ollama 가 필요한 테스트",
+    "browser: Playwright 브라우저가 필요한 테스트",
+]
