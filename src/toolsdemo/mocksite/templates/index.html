@@ -5,10 +5,10 @@
   <h2>승차권 조회</h2>
   <form action="/search" method="get" id="search-form">
     <label for="departure">출발역</label>
-    <input id="departure" name="departure" list="station-list" placeholder="서울" autocomplete="off">
+    <input id="departure" name="departure" list="station-list" value="서울" placeholder="서울" autocomplete="off" required>
 
     <label for="arrival">도착역</label>
-    <input id="arrival" name="arrival" list="station-list" placeholder="부산" autocomplete="off">
+    <input id="arrival" name="arrival" list="station-list" value="부산" placeholder="부산" autocomplete="off" required>
 
     <label for="date">출발일</label>
     <input id="date" name="date" type="date" value="{{ today }}">
