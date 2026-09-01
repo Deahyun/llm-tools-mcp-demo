@@ -26,6 +26,7 @@ toolsdemo-phase1 = "toolsdemo.agent_tools:main"
 toolsdemo-phase2 = "toolsdemo.mcp_.client_agent:main"
 toolsdemo-mocksite = "toolsdemo.mocksite.server:main"
 toolsdemo-mcp-server = "toolsdemo.mcp_.server:main"
+toolsdemo-mcp-http = "toolsdemo.mcp_.http_server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

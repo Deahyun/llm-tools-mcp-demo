@@ -7,6 +7,12 @@ Phase 1(`agent_tools.py`)과 비교하면 차이는 두 가지뿐입니다:
 에이전트 루프(`OllamaAgent`)와 도구 구현은 Phase 1 과 완전히 동일합니다.
 
     python -m toolsdemo.mcp_.client_agent "내일 오전 9시쯤 서울에서 부산 가는 KTX 예약해줘"
+
+트랜스포트는 `MCP_TRANSPORT` 로 고릅니다. 에이전트 루프와 도구는 어느 쪽이든 동일합니다.
+
+  * `stdio`(기본) — 클라이언트가 서버를 자식 프로세스로 직접 띄운다. 준비할 것이 없다.
+  * `http`        — 미리 띄워 둔 Streamable HTTP 서버에 URL 로 접속한다.
+                    `python -m toolsdemo.mcp_.http_server` 를 먼저 실행해야 한다.
 """
 
 from __future__ import annotations
@@ -39,6 +45,17 @@ def server_params() -> StdioServerParameters:
     )
 
 
+def client_target() -> StdioServerParameters | str:
+    """MCP 접속 대상. 문자열이면 Streamable HTTP URL, 아니면 stdio 로 띄울 서버 파라미터.
+
+    SDK 의 `Client` 는 둘 다 받습니다. 그래서 트랜스포트를 바꿔도 아래 `run()` 은
+    한 줄도 달라지지 않습니다.
+    """
+    if settings.mcp_transport == "http":
+        return settings.mcp_http_endpoint
+    return server_params()
+
+
 def to_ollama_schemas(mcp_tools) -> list[dict[str, Any]]:
     """MCP Tool 목록 → Ollama function calling 스키마."""
     return [
@@ -62,7 +79,7 @@ def _first_text(response) -> Any:
 
 
 async def run(query: str) -> int:
-    async with Client(server_params()) as client:
+    async with Client(client_target()) as client:
         listed = await client.list_tools()
         schemas = to_ollama_schemas(listed.tools)
 
@@ -84,7 +101,8 @@ async def run(query: str) -> int:
 
         print(
             f"\n[Phase 2 · MCP]  model={settings.ollama_model}  "
-            f"target={settings.target_site}  mcp_tools={len(schemas)}"
+            f"target={settings.target_site}  transport={settings.mcp_transport}  "
+            f"mcp_tools={len(schemas)}"
         )
         print(f"질의: {query}\n" + "-" * 70)
 
