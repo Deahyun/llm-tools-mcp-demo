@@ -27,6 +27,9 @@ _adapter = get_adapter(settings.target_site, settings.mock_site_url, settings.ko
 _state: dict[str, Any] = {"last_query": None, "options": [], "selected": None}
 
 
+#: 한 번에 모델에게 넘기는 최대 열차 수. 컨텍스트를 아끼되 잘림은 반드시 알린다.
+_MAX_OPTIONS = 12
+
 _DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _TIME_RE = re.compile(r"^\d{2}:\d{2}$")
 
@@ -73,7 +76,21 @@ async def search_trains(
         arrival: 도착역 이름. 예: 부산
         date: 출발 날짜. 반드시 YYYY-MM-DD 형식. 모르면 get_today 를 먼저 호출한다.
         depart_after: 이 시각 이후 열차만 조회. HH:MM 형식(24시간제). 예: 09:00. 비우면 전체.
+
+    Returns:
+        count 는 조회된 전체 편수, options 는 그중 출발이 이른 최대 12편입니다.
+        truncated 가 true 면 뒤쪽 열차가 잘린 것이므로, 늦은 시간대를 원하면
+        depart_after 를 늦춰 다시 조회하세요. last_depart_time 이 실제 막차 시각입니다.
     """
+    if not departure.strip() or not arrival.strip():
+        return {
+            "ok": False,
+            "error": "출발역과 도착역은 비울 수 없습니다.",
+            "hint": "예: departure='서울', arrival='부산'",
+        }
+    if departure.strip() == arrival.strip():
+        return {"ok": False, "error": f"출발역과 도착역이 같습니다: {departure!r}"}
+
     day = _normalize_date(date)
     if day is None:
         return {
@@ -108,14 +125,28 @@ async def search_trains(
         }
 
     available = [o for o in options if o.get("seats_left", 1) > 0]
+    shown = options[:_MAX_OPTIONS]
+    truncated = len(options) > len(shown)
+
+    message = (
+        "예약하려면 select_train 에 train_no 를 넘기세요. seats_left 가 0 인 열차는 매진입니다."
+    )
+    if truncated:
+        message += (
+            f" 조회된 {len(options)}편 중 출발이 이른 {len(shown)}편만 표시했습니다"
+            f" (마지막 표시: {shown[-1]['depart_time']}, 실제 막차: {options[-1]['depart_time']})."
+            " 더 늦은 열차가 필요하면 depart_after 를 늦춰 다시 조회하세요."
+        )
+
     return {
         "ok": True,
         "count": len(options),
+        "returned": len(shown),
+        "truncated": truncated,
         "available_count": len(available),
-        "options": options[:12],
-        "message": (
-            "예약하려면 select_train 에 train_no 를 넘기세요. seats_left 가 0 인 열차는 매진입니다."
-        ),
+        "last_depart_time": options[-1]["depart_time"],
+        "options": shown,
+        "message": message,
     }
 
 

@@ -47,6 +47,13 @@ async def test_full_reservation_flow():
     assert found["ok"] is True and found["count"] > 0
     assert all(o["depart_time"] >= "09:00" for o in found["options"])
 
+    # 잘림은 반드시 드러나야 한다 — count 만 보고 options 가 전부라고 오해하면 안 된다.
+    assert found["returned"] == len(found["options"])
+    assert found["truncated"] is (found["count"] > found["returned"])
+    assert found["last_depart_time"] >= found["options"][-1]["depart_time"]
+    if found["truncated"]:
+        assert "depart_after" in found["message"], "잘렸는데 회복 방법을 안내하지 않습니다"
+
     available = [o for o in found["options"] if o["seats_left"] > 0]
     assert available, "잔여석 있는 열차가 없습니다"
     train_no = available[0]["train_no"]
